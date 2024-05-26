@@ -1,6 +1,7 @@
 package com.irsan.templateproject.controller;
 
-import com.irsan.templateproject.model.TestRequest;
+import com.irsan.templateproject.model.request.TestRequest;
+import com.irsan.templateproject.utility.annotation.Logging;
 import com.irsan.templateproject.utility.helper.ResponseHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,14 @@ import static com.irsan.templateproject.utility.constant.GlobalConstant.SUCCESS;
 @RequestMapping("api/v1/test")
 public class TestController {
 
+    @Logging(traceId = true)
     @GetMapping
     public ResponseEntity<?> test(@RequestParam String name) {
         String message = String.format("Hello %s, my name Irsan Ramadhan", name);
         return ResponseHelper.build(message, SUCCESS, HttpStatus.OK);
     }
 
+    @Logging(traceId = true)
     @PostMapping
     public ResponseEntity<?> testPost(@RequestBody TestRequest request) {
         String message = String.format("Hello %s, my name Irsan Ramadhan. Your message (%s) has been received", request.getName(), request.getMessage());

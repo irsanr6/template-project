@@ -15,7 +15,7 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
 public class GlobalBeanConfig {
 
     @Bean
-    public DispatcherServlet dispatcherServlet () {
+    public DispatcherServlet dispatcherServlet() {
         DispatcherServlet ds = new DispatcherServlet();
         ds.setThrowExceptionIfNoHandlerFound(true);
         ds.setDetectAllHandlerMappings(false);

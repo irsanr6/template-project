@@ -1,7 +1,7 @@
 package com.irsan.templateproject.config.interceptor;
 
 import com.irsan.templateproject.exception.InvalidApiKeyException;
-import lombok.extern.slf4j.Slf4j;
+import com.irsan.templateproject.utility.util.LoggerUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletResponse;
  * @date : 17/05/2024
  */
 @Component
-@Slf4j
 public class AppsInterceptor implements HandlerInterceptor {
+
+    LoggerUtil log = new LoggerUtil(AppsInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
