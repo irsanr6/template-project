@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import static com.irsan.templateproject.utility.constant.GlobalConstant.ERROR;
+import static com.irsan.templateproject.utility.constant.GlobalConstant.ERROR_STACKTRACE_LOG_FILE;
 
 /**
  * @author : Irsan Ramadhan
@@ -57,7 +58,7 @@ public class GlobalExceptionHandler {
 
     private void printStackTrace(Throwable e) {
         String requestId = MDC.get("requestId");
-        fileUtil.printStackTrace(e, String.format("log/prinstacktrace/logging_%s.log", requestId));
+        fileUtil.printStackTrace(e, String.format(ERROR_STACKTRACE_LOG_FILE, requestId));
         log.error(e.getMessage());
     }
 

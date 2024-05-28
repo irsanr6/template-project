@@ -44,8 +44,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserResponse save(UserRequest userRequest) {
         boolean usernameExist = isUsernameExist(userRequest.getUsername());
         if (usernameExist) {
-//            throw new AppException(String.format("User with username:%s already exist", userRequest.getUsername()));
-            log.info("User with username:{} already exist", userRequest.getUsername());
+            throw new AppException(String.format("User with username:%s already exist", userRequest.getUsername()));
         }
         UserProfile userProfile = UserProfile.builder()
                 .fullName(userRequest.getFullName())
@@ -128,8 +127,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserResponse userResponse = getUserByUsername(username);
-
-        log.info("UserResponse: {}", userResponse.toString());
 
         GrantedAuthority authorities = new SimpleGrantedAuthority(userResponse.getAuthorities().name());
 

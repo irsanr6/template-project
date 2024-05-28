@@ -11,8 +11,10 @@ public class GlobalConstant {
 
     public static final String SUCCESS = "SUCCESS";
     public static final String ERROR = "ERROR";
-    public static final String KEYSTORE_PATH = "classpath:keystore/";
-    public static final String ERROR_STACKTRACE_LOG_PATH = "classpath:keystore/";
-    public static final long EXPIRE_DURATION = TimeUnit.HOURS.toMillis(1); //1 hour
+    public static final String KEYSTORE_PATH_1 = "classpath:keystore/";
+    public static final String KEYSTORE_PATH_2 = "src/main/resources/keystore/";
+    public static final String ERROR_STACKTRACE_LOG_FILE = "log/stacktrace/logging_%s.log";
+    public static final String ERROR_STACKTRACE_LOG_PATH = "log/stacktrace/";
+    public static final long EXPIRE_DURATION = TimeUnit.DAYS.toMillis(1); //1 day
 
 }

@@ -1,22 +1,23 @@
 package com.irsan.templateproject.utility.util;
 
 import com.irsan.templateproject.exception.AppException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import static com.irsan.templateproject.utility.constant.GlobalConstant.KEYSTORE_PATH;
+import static com.irsan.templateproject.utility.constant.GlobalConstant.KEYSTORE_PATH_1;
+import static com.irsan.templateproject.utility.constant.GlobalConstant.KEYSTORE_PATH_2;
 
 /**
  * @author : Irsan Ramadhan
@@ -25,10 +26,46 @@ import static com.irsan.templateproject.utility.constant.GlobalConstant.KEYSTORE
  */
 @Component
 public class KeyPairUtil {
+    LoggerUtil log = new LoggerUtil(KeyPairUtil.class);
+
+    @Value(value = "${enable-generate-keypair}")
+    private boolean enableGenerateKeypair;
+
+    @Bean
+    public void generateKeyPair() {
+        if (!enableGenerateKeypair) {
+            log.warn("KeyPair generation is disabled");
+            return;
+        }
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+
+            KeyPair kp = kpg.generateKeyPair();
+            PrivateKey s = kp.getPrivate();
+            PublicKey p = kp.getPublic();
+
+            String filePath = "%s/%s";
+            String privateKey = "private_keypair.key";
+            String publicKey = "public_keypair.key";
+            try (FileOutputStream outS = new FileOutputStream(String.format(filePath, KEYSTORE_PATH_2, privateKey))) {
+                outS.write(s.getEncoded());
+            }
+
+            try (FileOutputStream outP = new FileOutputStream(String.format(filePath, KEYSTORE_PATH_2, publicKey))) {
+                outP.write(p.getEncoded());
+            }
+
+            log.info("KeyPair success generated");
+            log.info("Private key and Public key saved in file with name : {}, {}", privateKey, publicKey);
+        } catch (Exception e) {
+            throw new AppException(e);
+        }
+    }
 
     public PrivateKey loadPrivateKey() {
         try {
-            File privateKeyFile = ResourceUtils.getFile(KEYSTORE_PATH + "private_key_1716557358382_0.6783708362488501.key");
+            File privateKeyFile = ResourceUtils.getFile(KEYSTORE_PATH_1 + "private_keypair.key");
             byte[] privateKeyBytes = Files.readAllBytes(privateKeyFile.toPath());
 
             KeyFactory privateKeyFactory = KeyFactory.getInstance("RSA");
@@ -41,7 +78,7 @@ public class KeyPairUtil {
 
     public PublicKey loadPublicKey() {
         try {
-            File publicKeyFile = ResourceUtils.getFile(KEYSTORE_PATH + "public_key_1716557358382_0.6783708362488501.key");
+            File publicKeyFile = ResourceUtils.getFile(KEYSTORE_PATH_1 + "public_keypair.key");
             byte[] publicKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
 
             KeyFactory pulicKeyFactory = KeyFactory.getInstance("RSA");

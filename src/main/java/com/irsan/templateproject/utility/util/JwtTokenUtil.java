@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
+import static com.irsan.templateproject.utility.constant.GlobalConstant.ERROR_STACKTRACE_LOG_FILE;
 import static com.irsan.templateproject.utility.constant.GlobalConstant.EXPIRE_DURATION;
 
 /**
@@ -29,11 +30,11 @@ public class JwtTokenUtil {
     public String generateAccessToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setIssuer("Template Project 2024")
+                .setIssuer("template_project@example.com")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION))
                 .signWith(SignatureAlgorithm.RS256, keyPairUtil.loadPrivateKey())
-//                .compressWith(CompressionCodecs.GZIP)
+                .compressWith(CompressionCodecs.GZIP)
                 .setId(UUID.randomUUID().toString())
                 .compact();
 
@@ -46,19 +47,19 @@ public class JwtTokenUtil {
             return true;
         } catch (ExpiredJwtException ex) {
             log.error("JWT expired: {}", ex.getMessage());
-            fileUtil.printStackTrace(ex, String.format("log/prinstacktrace/logging_%s.log", requestId));
+            fileUtil.printStackTrace(ex, String.format(ERROR_STACKTRACE_LOG_FILE, requestId));
         } catch (IllegalArgumentException ex) {
             log.error("Token is null, empty or only whitespace: {}", ex.getMessage());
-            fileUtil.printStackTrace(ex, String.format("log/prinstacktrace/logging_%s.log", requestId));
+            fileUtil.printStackTrace(ex, String.format(ERROR_STACKTRACE_LOG_FILE, requestId));
         } catch (MalformedJwtException ex) {
             log.error("JWT is invalid: {}", ex.getMessage());
-            fileUtil.printStackTrace(ex, String.format("log/prinstacktrace/logging_%s.log", requestId));
+            fileUtil.printStackTrace(ex, String.format(ERROR_STACKTRACE_LOG_FILE, requestId));
         } catch (UnsupportedJwtException ex) {
             log.error("JWT is not supported: {}", ex.getMessage());
-            fileUtil.printStackTrace(ex, String.format("log/prinstacktrace/logging_%s.log", requestId));
+            fileUtil.printStackTrace(ex, String.format(ERROR_STACKTRACE_LOG_FILE, requestId));
         } catch (SignatureException ex) {
             log.error("Signature validation failed: {}", ex.getMessage());
-            fileUtil.printStackTrace(ex, String.format("log/prinstacktrace/logging_%s.log", requestId));
+            fileUtil.printStackTrace(ex, String.format(ERROR_STACKTRACE_LOG_FILE, requestId));
         }
 
         return false;

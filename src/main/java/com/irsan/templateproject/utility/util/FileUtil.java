@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author : Irsan Ramadhan
@@ -19,12 +21,19 @@ public class FileUtil {
 
     public void printStackTrace(Throwable e, String path) {
         File file = new File(path);
+        File parentFile = file.getParentFile();
         try {
+            if (!parentFile.exists()) {
+                boolean mkdirs = file.getParentFile().mkdirs();
+                if (!mkdirs) {
+                    log.warn("Failed to create directory log stack trace");
+                    return;
+                }
+            }
             boolean newFile = file.createNewFile();
-            if (newFile) {
-                log.info("File log stack trace created successfully");
-            } else {
+            if (!newFile) {
                 log.warn("Failed to create file log stack trace");
+                return;
             }
             FileOutputStream fos = new FileOutputStream(file);
             PrintStream ps = new PrintStream(fos);
@@ -32,6 +41,28 @@ public class FileUtil {
             ps.close();
         } catch (IOException ex) {
             printStackTrace(ex, path);
+        }
+    }
+
+    public List<Map<String, Object>> getFiles(String dir) {
+        try {
+            File file = new File(dir);
+            File[] files = file.listFiles();
+
+            assert files != null;
+            Arrays.sort(files, Comparator.comparingLong(File::lastModified));
+
+            return Arrays.stream(files)
+                    .filter(f -> !f.isDirectory())
+                    .map(f -> {
+                        Map<String, Object> map = new LinkedHashMap<>();
+                        map.put("fileName", f.getName());
+                        map.put("lastModified", f.lastModified());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            return new ArrayList<>();
         }
     }
 
