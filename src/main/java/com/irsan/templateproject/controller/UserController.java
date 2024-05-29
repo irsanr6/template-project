@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.irsan.templateproject.utility.constant.GlobalConstant.SUCCESS;
@@ -54,7 +55,11 @@ public class UserController {
 
         String token = userService.login(loginRequest);
 
-        return ResponseHelper.build(token, SUCCESS, HttpStatus.OK);
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("username", loginRequest.getUsername());
+        response.put("access_token", token);
+
+        return ResponseHelper.build(response, SUCCESS, HttpStatus.OK);
     }
 
     private <T> T getData(Map<String, String> encRequest, Class<T> clazz) {

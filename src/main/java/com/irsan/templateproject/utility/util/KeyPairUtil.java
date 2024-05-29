@@ -1,8 +1,9 @@
 package com.irsan.templateproject.utility.util;
 
 import com.irsan.templateproject.exception.AppException;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
@@ -25,14 +26,15 @@ import static com.irsan.templateproject.utility.constant.GlobalConstant.KEYSTORE
  * @date : 24/05/2024
  */
 @Component
+@RequiredArgsConstructor
 public class KeyPairUtil {
-    LoggerUtil log = new LoggerUtil(KeyPairUtil.class);
-
-    @Value(value = "${enable-generate-keypair}")
-    private boolean enableGenerateKeypair;
+    private final LoggerUtil log = new LoggerUtil(KeyPairUtil.class);
+    private final Environment env;
 
     @Bean
     public void generateKeyPair() {
+        boolean enableGenerateKeypair = env.getProperty("enable-generate-keypair", Boolean.class, false);
+
         if (!enableGenerateKeypair) {
             log.warn("KeyPair generation is disabled");
             return;

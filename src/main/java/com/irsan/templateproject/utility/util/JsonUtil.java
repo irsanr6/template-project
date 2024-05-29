@@ -9,8 +9,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @date : 28/05/2024
  */
 public class JsonUtil {
+
     public static <T> T jsonToClass(String json, Class<T> clazz) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(json, clazz);
     }
+
+    public static <T> String objectToJson(T object) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(object);
+    }
+
 }
