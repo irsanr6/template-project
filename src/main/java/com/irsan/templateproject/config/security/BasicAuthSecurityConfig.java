@@ -27,11 +27,17 @@ public class BasicAuthSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests().antMatchers("/api/v1/user/auth/login").permitAll().anyRequest().authenticated()
-                .and().httpBasic().authenticationEntryPoint(authenticationEntryPoint)
-                .and().addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+                .sessionManagement(session -> {
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                    session.maximumSessions(3);
+                })
+                .authorizeRequests(auth -> {
+                    auth.antMatchers("/api/v1/user/auth/login").permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .userDetailsService(userDetailsService);
         return http.build();
     }
