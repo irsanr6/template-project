@@ -2,15 +2,16 @@ package com.irsan.templateproject.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.irsan.templateproject.exception.AppException;
+import com.irsan.templateproject.model.enumeration.Role;
 import com.irsan.templateproject.model.request.LoginRequest;
 import com.irsan.templateproject.model.request.UserRequest;
 import com.irsan.templateproject.model.response.UserResponse;
 import com.irsan.templateproject.service.user.UserService;
 import com.irsan.templateproject.utility.annotation.Logging;
+import com.irsan.templateproject.utility.annotation.RolesAllowed;
 import com.irsan.templateproject.utility.helper.ResponseHelper;
 import com.irsan.templateproject.utility.util.AesUtil;
 import com.irsan.templateproject.utility.util.JsonUtil;
-import com.irsan.templateproject.utility.util.LoggerUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,12 @@ import static com.irsan.templateproject.utility.constant.GlobalConstant.SUCCESS;
 @RequestMapping("api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
-    LoggerUtil log = new LoggerUtil(UserController.class);
-    private final AesUtil aesUtil;
 
+    private final AesUtil aesUtil;
     private final UserService userService;
 
     @Logging(traceId = true)
+    @RolesAllowed(roles = {Role.ROLE_SUPER_ADMIN})
     @PostMapping("auth/register")
     public ResponseEntity<?> saveUser(@RequestBody Map<String, String> encRequest) throws JsonProcessingException {
         UserRequest userRequest = getData(encRequest, UserRequest.class);

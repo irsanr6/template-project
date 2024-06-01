@@ -28,6 +28,7 @@ import static com.irsan.templateproject.utility.constant.GlobalConstant.KEYSTORE
 @Component
 @RequiredArgsConstructor
 public class KeyPairUtil {
+
     private final LoggerUtil log = new LoggerUtil(KeyPairUtil.class);
     private final Environment env;
 

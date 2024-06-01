@@ -29,7 +29,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        ResponseEntity<ResponseHelper<Object>> buildResponse = ResponseHelper.build("Authentication failed, please check your access token or api-key", ERROR, HttpStatus.UNAUTHORIZED);
+        ResponseEntity<ResponseHelper<Object>> buildResponse = ResponseHelper.build("Authentication failed, please check your access token", ERROR, HttpStatus.UNAUTHORIZED);
 
         OutputStream responseStream = response.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();

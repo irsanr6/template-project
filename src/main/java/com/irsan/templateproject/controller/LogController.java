@@ -1,7 +1,9 @@
 package com.irsan.templateproject.controller;
 
 import com.irsan.templateproject.exception.AppException;
+import com.irsan.templateproject.model.enumeration.Role;
 import com.irsan.templateproject.utility.annotation.Logging;
+import com.irsan.templateproject.utility.annotation.RolesAllowed;
 import com.irsan.templateproject.utility.helper.GlobalHelper;
 import com.irsan.templateproject.utility.helper.ResponseHelper;
 import com.irsan.templateproject.utility.util.FileUtil;
@@ -33,6 +35,7 @@ public class LogController {
     private final FileUtil fileUtil;
 
     @Logging(traceId = true)
+    @RolesAllowed(roles = {Role.ROLE_SUPER_ADMIN})
     @GetMapping("stack-trace")
     public ResponseEntity<?> getLogStackTrace(@RequestParam(required = false, defaultValue = "", value = "trace-id") String traceId) {
         List<Map<String, Object>> files = fileUtil.getFiles(ERROR_STACKTRACE_LOG_PATH).stream()
@@ -47,6 +50,7 @@ public class LogController {
     }
 
     @Logging(traceId = true)
+    @RolesAllowed(roles = {Role.ROLE_SUPER_ADMIN})
     @GetMapping("stack-trace/print/{fileName}")
     public String printLogStackTrace(@PathVariable String fileName) {
         File file = new File(ERROR_STACKTRACE_LOG_PATH + fileName);
@@ -59,9 +63,11 @@ public class LogController {
     }
 
     @Logging(traceId = true)
+    @RolesAllowed(roles = {Role.ROLE_SUPER_ADMIN})
     @DeleteMapping("stack-trace/delete-all")
     public ResponseEntity<?> deleteLogStackTrace(@RequestParam(required = false, defaultValue = "", value = "file-name") String fileName) {
         fileUtil.deleteFiles(fileName);
         return ResponseHelper.build("Success delete log file", SUCCESS, HttpStatus.OK);
     }
+
 }
