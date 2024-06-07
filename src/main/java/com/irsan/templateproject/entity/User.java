@@ -1,13 +1,11 @@
 package com.irsan.templateproject.entity;
 
 import com.irsan.templateproject.model.enumeration.Role;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +30,17 @@ public class User extends Auditable {
     private String username;
     private String password;
     private Role authorities;
-    @Column(columnDefinition = "bool default true")
+    @Column(columnDefinition = "bool default true", insertable = false, updatable = false)
     private boolean accountNonExpired;
-    @Column(columnDefinition = "bool default true")
+    @Column(columnDefinition = "bool default true", insertable = false, updatable = false)
     private boolean accountNonLocked;
-    @Column(columnDefinition = "bool default true")
+    @Column(columnDefinition = "bool default true", insertable = false, updatable = false)
     private boolean credentialsNonExpired;
-    @Column(columnDefinition = "bool default true")
+    @Column(columnDefinition = "bool default true", insertable = false, updatable = false)
     private boolean enabled;
+    @Column(columnDefinition = "int4 default 0", insertable = false, updatable = false)
+    private int failedAttempt;
+    private LocalDateTime lockTime;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn

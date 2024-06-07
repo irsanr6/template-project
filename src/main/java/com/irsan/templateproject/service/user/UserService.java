@@ -12,8 +12,9 @@ import com.irsan.templateproject.model.response.UserResponse;
 public interface UserService {
 
     UserResponse save(UserRequest userRequest);
-    UserResponse getUserByUsername(String username);
+
     boolean isUsernameExist(String username);
+
     String login(LoginRequest loginRequest);
 
 }

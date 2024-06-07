@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -44,10 +46,16 @@ public class GlobalExceptionHandler {
         return ResponseHelper.build(e.getMessage(), ERROR, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidApiKeyException.class)
-    public ResponseEntity<?> invalidApiKeyException(InvalidApiKeyException e) {
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> badCredentialsException(BadCredentialsException e) {
         printStackTrace(e);
         return ResponseHelper.build(e.getMessage(), ERROR, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<?> lockedException(LockedException e) {
+        printStackTrace(e);
+        return ResponseHelper.build(e.getMessage(), ERROR, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UnauthorizedException.class)

@@ -11,19 +11,13 @@ import com.irsan.templateproject.repository.UserRepository;
 import com.irsan.templateproject.utility.util.JwtTokenUtil;
 import com.irsan.templateproject.utility.util.LoggerUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author : Irsan Ramadhan
@@ -32,11 +26,12 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManager authenticationManager;
     private final LoggerUtil log = new LoggerUtil(UserServiceImpl.class);
 
     @Transactional
@@ -77,36 +72,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserResponse getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElse(new User());
-
-        List<String> collectTokenActives = user.getUserTokenActives().stream()
-                .map(UserTokenActive::getAccessToken)
-                .collect(Collectors.toList());
-
-        return UserResponse.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .authorities(user.getAuthorities())
-                .fullName(user.getUserProfile().getFullName())
-                .email(user.getUserProfile().getEmail())
-                .address(user.getUserProfile().getAddress())
-                .phone(user.getUserProfile().getPhone())
-                .tokenActives(collectTokenActives)
-                .build();
-    }
-
-    @Override
     public boolean isUsernameExist(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
 
     @Override
     public String login(LoginRequest loginRequest) {
-        String token = jwtTokenUtil.generateAccessToken(loginRequest.getUsername());
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElse(new User());
+
+        String token = jwtTokenUtil.generateAccessToken(loginRequest.getUsername());
 
         UserTokenActive userTokenActive = UserTokenActive.builder()
                 .id(jwtTokenUtil.getJwtId(token))
@@ -122,15 +98,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
 
         return token;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserResponse userResponse = getUserByUsername(username);
-
-        GrantedAuthority authorities = new SimpleGrantedAuthority(userResponse.getAuthorities().name());
-
-        return new org.springframework.security.core.userdetails.User(userResponse.getUsername(), userResponse.getPassword(), Collections.singletonList(authorities));
     }
 
 }
