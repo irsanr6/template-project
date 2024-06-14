@@ -7,7 +7,7 @@ package com.irsan.templateproject.utility.helper;
  */
 public class GlobalHelper {
 
-    public static <T> String toString(T object) {
+    public static <T> String getString(T object) {
         if (object == null) {
             return "";
         }

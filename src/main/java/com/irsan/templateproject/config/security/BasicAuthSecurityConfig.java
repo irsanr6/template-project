@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.irsan.templateproject.utility.constant.GlobalConstant.getAuthWhitelist;
+
 /**
  * @author : Irsan Ramadhan
  * @email : irsan.ramadhan@iconpln.co.id
@@ -44,7 +46,7 @@ public class BasicAuthSecurityConfig {
                     session.maximumSessions(3);
                 })
                 .authorizeRequests(auth -> {
-                    auth.antMatchers("/api/v1/user/auth/login").permitAll();
+                    auth.antMatchers(getAuthWhitelist()).permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(x -> x.failureHandler(customLoginFailureHandler)

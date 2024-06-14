@@ -15,6 +15,13 @@ public class GlobalConstant {
     public static final String KEYSTORE_PATH_2 = "src/main/resources/keystore/";
     public static final String ERROR_STACKTRACE_LOG_FILE = "log/stacktrace/logging_%s.log";
     public static final String ERROR_STACKTRACE_LOG_PATH = "log/stacktrace/";
-    public static final long EXPIRE_DURATION = TimeUnit.DAYS.toMillis(1); //1 day
+    public static final long EXPIRE_DURATION = TimeUnit.DAYS.toMillis(1); // 1 day
+    private static final String[] AUTH_WHITELIST = {
+            "/api/v1/user/auth/login"
+    };
+
+    public static String[] getAuthWhitelist() {
+        return AUTH_WHITELIST;
+    }
 
 }

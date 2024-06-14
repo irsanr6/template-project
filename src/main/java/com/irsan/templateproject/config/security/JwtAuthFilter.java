@@ -36,12 +36,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         requestId.set(LoggerUtil.generateTraceId());
         MDC.put("requestId", requestId.get());
 
-//        String apiKey = request.getHeader("X-ApiKey");
-//        if (!apiKey.equals("123456789")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-
         if (!hasAuthorizationBearer(request)) {
             filterChain.doFilter(request, response);
             return;

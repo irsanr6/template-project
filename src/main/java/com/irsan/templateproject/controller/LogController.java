@@ -41,7 +41,7 @@ public class LogController {
         List<Map<String, Object>> files = fileUtil.getFiles(ERROR_STACKTRACE_LOG_PATH).stream()
                 .filter(file -> {
                     if (!traceId.isEmpty()) {
-                        return GlobalHelper.toString(file.get("traceId")).equals(traceId);
+                        return GlobalHelper.getString(file.get("traceId")).equals(traceId);
                     }
 
                     return true;
